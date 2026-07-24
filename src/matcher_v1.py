@@ -1,9 +1,6 @@
 """
 matcher_v1.py
-v1 of the FAQ assistant: rule-based fuzzy string matching.
-This does NOT use machine learning. It compares the incoming question
-against every question in the dataset and returns the answer for the
-closest text match, using Python's built-in difflib library.
+v1 of the FAQ assistant: rule-based fuzzy string matching, NOT machine learning.
 """
 
 import difflib
@@ -12,10 +9,9 @@ from load_data import load_faq_data
 
 def find_best_match(user_question, data, min_confidence=0.5):
     """
-    Compares user_question against every question in the dataset
-    and returns the answer with the highest similarity score.
-    If the best match's score is below min_confidence, returns
-    "no match" instead of a wrong guess.
+    It compares the question against the actual dataset, then returns the answer
+    that has the top similarity score. If the match is below min_confidence, it
+    returns no match instead of guessing wrong.
     """
     if user_question.strip() == "":
         return None, "Please type a question.", 0.0

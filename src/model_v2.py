@@ -1,10 +1,10 @@
 """
 model_v2.py
-v2 of the FAQ assistant: this IS machine learning.
-Uses TF-IDF to convert questions into numbers, then trains a
-Logistic Regression classifier to predict the CATEGORY of a question.
-Honest limitation: with only ~10-60 rows, this is learning from a
-very small dataset — not comparable to production ML.
+v2 of the FAQ assistant is machine learning. It uses TF-IDF to convert questions
+into numbers, then it trains a Logistic Regression classifier to predict the
+category of a question from the given dataset.
+Honest limitation: with only 10 to 60 rows, this is learning from a very small
+dataset, hence not comparable to production ML.
 """
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -36,7 +36,7 @@ def get_answer_by_category(category, data):
 if __name__ == "__main__":
     data = load_faq_data("data/sample_data.csv")
     vectorizer, model = train_classifier(data)
-    test_questions = ["class room ki seating kya hogi", "agar mein uniform mein na aaon toh kya hoga","meray baba mujhay maarat hein subha","mujhay class mein neend aati hai"]
+    test_questions = ["test kitnay marka ka hai ", "syllabus mein kya kya aa raha hai "]
     for q in test_questions:
         category = predict_category(q, vectorizer, model)
         answer = get_answer_by_category(category, data)
