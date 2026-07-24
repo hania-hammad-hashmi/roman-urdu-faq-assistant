@@ -3,6 +3,17 @@
 This dataset was written by me for demonstration purposes. It is NOT real data
 collected from students — it was self-authored to protect the privacy of the
 community I work with. It represents the kinds of questions students commonly ask.
+## Problem
+Pakistan still has millions of children out of school, and even among those
+enrolled, many families can't afford after-school tutoring to fill the gaps.
+Over four years volunteering in community education, I kept seeing the same
+pattern: students with basic, repeated questions and no one available to answer
+them outside class hours. During my internship at AI Uplift, I worked on the
+data side of a chatbot built for underprivileged communities, and it left me
+with a question I wanted to answer myself, outside of work: could a much
+smaller version of that idea, built by me alone, actually hold up? I built this
+project afterward, independently, to find out.
+
 ## How to Run
 1. Upload sample_data.csv to a `data/` folder in your Colab session.
 2. Upload the .py files from `src/` to your Colab session.
@@ -53,3 +64,19 @@ unrelated to the dataset (e.g. a question about classroom seating returned a
   v2 fails by having no threshold at all. Fixing this properly would likely
   require a larger dataset and a confidence mechanism for v2, which is out of
   scope for this version.
+## What I Learned
+Most of what I actually learned building this had nothing to do with the code
+itself. I broke my GitHub setup more times than I could count - clone errors, a
+merge conflict I had to resolve by hand, a security token I accidentally exposed
+and had to revoke within minutes of realizing it. None of it was elegant. But
+debugging git turned out to teach me the same lesson as debugging the model:
+check what actually happened, not what you assumed happened. I made that mistake
+with my own code too - after finding that my rule-based version correctly
+refused questions it didn't recognize while my trained model guessed wrong every
+time, I started assuming the simple version was just better. Then I tested a
+real question about running water, and the simple version failed it, matching
+it to an unrelated question about old textbooks - while the trained model got
+it right. Neither version was consistently trustworthy. I'd built two different,
+specific ways of being wrong, not one good tool and one bad one. That
+contradicted the clean story I'd already started telling myself about the
+project, and I had to sit with that instead of editing it away.
