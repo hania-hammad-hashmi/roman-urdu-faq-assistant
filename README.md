@@ -33,6 +33,28 @@ score just above the threshold and return a topically related but incorrect answ
 `src/model_v2.py` uses TF-IDF to convert questions into numeric vectors, then
 trains a Logistic Regression classifier to predict the category of a new question.
 This is genuine, if small-scale, machine learning.
+## Example Input/Output
+
+**Example 1 — v1 correctly finds a fuzzy match:**
+Input: "mein apna unifrom kahaan sey ley sakta hoon"
+v1 match: "winter uniform kab se lagta hai" (confidence: 0.59)
+Answer: "November se winter uniform shuru hota hai"
+
+**Example 2 — v1 correctly refuses; v2 guesses wrong:**
+Input: "ya larkon ki fees aur akrkion ki fees same hai"
+v1: "Sorry, I'm not confident I understood that question." (confidence: 0.48)
+v2: predicted category "fees" -> "Har month ki das tareekh tak fees jama karni hai"
+(Note: this question is not actually about fees — it asks whether boys' and
+girls' fees are the same, a comparison question v2 mishandled.)
+
+**Example 3 — v1 fails, v2 succeeds (the reversal found on Day 10):**
+Input: "agar gatar ka pani bhar jaye toh kya karna chahiay"
+v1 match: "agar paani khatam ho jaye to kya karen" (confidence: 0.66)
+-> "Office se refill karwa sakte ho" (wrong — this is about water running OUT,
+not flooding drains)
+v2: predicted category "water" -> "School ke pass water filter plant hai"
+(v2's answer is also imperfect, but the category prediction was more relevant
+than v1's specific match)
 
 **Known limitation:** unlike v1, this classifier has no confidence threshold —
 it always predicts the closest known category, even for questions completely
