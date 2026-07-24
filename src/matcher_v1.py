@@ -15,7 +15,7 @@ def find_best_match(user_question, data, min_confidence=0.5):
     It compares the queation against the acctual data set, then returns the answer 
     that top at the similarity scores. If the match is below the min confidence , then it returns 
     no match, instead of gussing wrong "
-    """
+    """ 
     if user_question.strip() == "":
         return None, "Please type a question.", 0.0
 
