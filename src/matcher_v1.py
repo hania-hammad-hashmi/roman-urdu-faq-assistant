@@ -12,10 +12,9 @@ from load_data import load_faq_data
 
 def find_best_match(user_question, data, min_confidence=0.5):
     """
-    Compares user_question against every question in the dataset
-    and returns the answer with the highest similarity score.
-    If the best match's score is below min_confidence, returns
-    "no match" instead of a wrong guess.
+    It compares the queation against the acctual data set, then returns the answer 
+    that top at the similarity scores. If the match is below the min confidence , then it returns 
+    no match, instead of gussing wrong "
     """
     if user_question.strip() == "":
         return None, "Please type a question.", 0.0
