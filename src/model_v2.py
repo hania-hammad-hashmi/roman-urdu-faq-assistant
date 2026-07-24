@@ -1,10 +1,9 @@
 """
 model_v2.py
-v2 of the FAQ assistant: this IS machine learning.
-Uses TF-IDF to convert questions into numbers, then trains a
-Logistic Regression classifier to predict the CATEGORY of a question.
-Honest limitation: with only ~10-60 rows, this is learning from a
-very small dataset — not comparable to production ML.
+v2 of the FAQ assistand is machine learing . It uses TF-IDF to convert questions into numbers,
+then it trains the Logistic Regression classifier to predict the catagoryof a question. from the given dats set .
+Honest limitation: with only 10 to 60 rows, this is learning from a
+very small dataset hence,not comparable to production ML.
 """
 
 from sklearn.feature_extraction.text import TfidfVectorizer
