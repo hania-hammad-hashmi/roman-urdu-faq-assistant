@@ -18,9 +18,17 @@ self-authored to protect the privacy of the community I work with. It represents
 the kinds of questions students commonly ask.
 
 ## How to Run
-1. Upload sample_data.csv to a `data/` folder in your Colab session.
-2. Upload the .py files from `src/` to your Colab session.
-3. Run: !python src/load_data.py
+Requirements: Python 3.12, pandas, scikit-learn (all pre-installed in Google
+Colab by default — no separate requirements.txt needed for a project this size).
+
+1. Open a new Google Colab notebook.
+2. Upload `sample_data.csv` to a `data/` folder in your Colab session.
+3. Upload all `.py` files from `src/` to your Colab session (same root level
+   as `data/`).
+4. Run: `!python src/load_data.py` (expected output: confirms 120 rows loaded,
+   takes under 1 second).
+5. Run: `!python src/demo.py` for an interactive session, or any of the other
+   `src/` scripts individually to see specific test results.
 
 ## v1: Rule-Based Matching (NOT machine learning)
 `src/matcher_v1.py` uses Python's built-in `difflib` library to compare a user's
@@ -56,25 +64,37 @@ question. This is genuine, if small-scale, machine learning.
   matched incorrectly, likely because it learned word patterns during training
   rather than relying on a single closest-question comparison.
 
-- - **v2's "transport" predictions on unrelated questions are not a true bias.**
-  Investigation showed transport's top learned words are specific and reasonable
-  (van, parking, area) — not generic overlap. The actual cause is that the model
-  achieves 99.2% accuracy on its own training data (119/120) but produces very
-  low-confidence, near-random predictions on unfamiliar phrasing (all candidate
-  categories cluster around 11-13% probability, a near-tie). This is a sign of
-  overfitting: with only 120 total examples, the model appears to memorize
-  specific training questions rather than learning generalizable patterns, so
-  new phrasing it hasn't seen produces close-to-arbitrary guesses rather than
-  confident, meaningful ones.
+- **Investigated the "transport" prediction issue (see
+  `src/debug_transport_bias.py`).** Initially this looked like an unexplained
+  bias. Investigation ruled out two hypotheses: it's not caused by class
+  imbalance (all 10 categories have exactly 12 rows each) and not caused by
+  generic overlapping words (transport's top learned words — "van," "parking,"
+  "area" — are specific and reasonable). The actual cause: the model reaches
+  99.2% accuracy on its own training data (119/120 — measured on training data
+  itself, not a held-out test set, since the goal here was diagnosing
+  overfitting rather than claiming generalization) but produces very
+  low-confidence, near-random predictions on unfamiliar phrasing — all
+  candidate categories cluster around 11-13% probability for the failing
+  questions, essentially a coin-flip among close options. This is a sign of
+  overfitting: with only 120 examples, the model appears to memorize specific
+  training questions rather than learn patterns that generalize to new
+  phrasing.
 
 - **v2 has no handling for empty input** and was not tested against it.
 
 - **Overall:** neither version reliably distinguishes "confident and correct"
   from "confident and wrong." v1 fails by passing a bad match through its
-  threshold; v2 fails by having no threshold at all and, in at least one case,
-  an unexplained categorical bias. Fixing this properly would likely require a
-  larger dataset, a confidence mechanism for v2, and further investigation
-  into the transport bias — all out of scope for this version.
+  threshold; v2 fails by having no threshold at all and, as confirmed above,
+  by overfitting to a small training set. Fixing this properly would require a
+  larger dataset, a confidence mechanism for v2, and a held-out validation set
+  to actually measure generalization — see "What a v3 Would Need" below.
+
+## What a v3 Would Need
+A meaningful next version would require: (1) a larger dataset — likely 500+
+rows to reduce the overfitting shown above, (2) a proper train/test split to
+measure real generalization instead of training accuracy, and (3) a confidence
+threshold for v2, similar to v1's, so it can say "I don't know" instead of
+always guessing.
 
 ## Example Input/Output
 
@@ -99,21 +119,25 @@ v2: predicted category "water" -> "School ke pass water filter plant hai"
 (v2's answer is also imperfect, but the category prediction was more relevant
 than v1's specific match)
 
-**Example 4 — the unexplained transport bias:**
+**Example 4 — the transport prediction issue (see Known Limitations for the
+confirmed cause: overfitting, not bias):**
 Input: "test kitnay marka ka hai" (how many marks is the test out of)
 v2: predicted category "transport" -> "School office se van book karwa sakte ho"
 Input: "syllabus mein kya kya aa raha hai" (what's covered in the syllabus)
 v2: predicted category "transport" -> "School office se van book karwa sakte ho"
-(Neither question relates to transport. See Known Limitations.)
+(Neither question relates to transport. Probability breakdown showed both
+predictions were low-confidence near-ties, not strong wrong guesses.)
 
 ## What I Learned
 Most of what I actually learned building this had nothing to do with the code
 itself. I broke my GitHub setup more times than I could count - clone errors, a
 merge conflict I had to resolve by hand, a security token I accidentally
-exposed and had to revoke within minutes of realizing it. None of it was
-elegant. But debugging git turned out to teach me the same lesson as debugging
-the model: check what actually happened, not what you assumed happened. I made
-that mistake with my own code too - after finding that my rule-based version
+exposed and had to revoke within minutes of realizing it. After that, I stopped
+ever typing a token directly into a code cell — I only ever entered it through
+getpass's hidden input field from that point on. None of it was elegant. But
+debugging git turned out to teach me the same lesson as debugging the model:
+check what actually happened, not what you assumed happened. I made that
+mistake with my own code too - after finding that my rule-based version
 correctly refused questions it didn't recognize while my trained model guessed
 wrong every time, I started assuming the simple version was just better. Then I
 tested a real question about running water, and the simple version failed it,
