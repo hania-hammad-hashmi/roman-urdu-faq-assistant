@@ -56,13 +56,16 @@ question. This is genuine, if small-scale, machine learning.
   matched incorrectly, likely because it learned word patterns during training
   rather than relying on a single closest-question comparison.
 
-- **v2 shows an unexplained bias toward the "transport" category.** Two
-  unrelated test questions (about exam marks and syllabus content) both got
-  predicted as "transport." I initially hypothesized this was caused by class
-  imbalance in the dataset, but checking the actual data disproved that — all
-  10 categories have exactly 12 rows each. The real cause is unconfirmed;
-  likely something in how TF-IDF weights specific words in these questions,
-  but I have not traced it further in this version.
+- - **v2's "transport" predictions on unrelated questions are not a true bias.**
+  Investigation showed transport's top learned words are specific and reasonable
+  (van, parking, area) — not generic overlap. The actual cause is that the model
+  achieves 99.2% accuracy on its own training data (119/120) but produces very
+  low-confidence, near-random predictions on unfamiliar phrasing (all candidate
+  categories cluster around 11-13% probability, a near-tie). This is a sign of
+  overfitting: with only 120 total examples, the model appears to memorize
+  specific training questions rather than learning generalizable patterns, so
+  new phrasing it hasn't seen produces close-to-arbitrary guesses rather than
+  confident, meaningful ones.
 
 - **v2 has no handling for empty input** and was not tested against it.
 
